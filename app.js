@@ -1,17 +1,22 @@
 const express = require('express');
-const app = express();
-const httpServer = require('http');
-const deviceRoutes = require('./routes/deviceRoutes');
-const uploadRoutes = require('./routes/uploadRoutes');
-const checkTokenMiddleware = require('./middleware/checkTokenMiddleware');
+const http = require('http');
+const socketIO = require('socket.io');
 const errorHandler = require('./infrastructure/errorHandling/errorHandler');
 const logger = require('./infrastructure/logger');
 const configs = require('./config/configs');
+const db = require('./repository/deviceRepository')
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
 
 app.use(express.json());
-app.use('/api/devices', checkTokenMiddleware, deviceRoutes);
-app.use('/api/upload', uploadMiddleware, uploadRoutes);
 app.use(errorHandler);
+
+db.connect();
+
+socketEvents(io);
+
 
 const PORT = configs.HTTP_PORT;
 app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
