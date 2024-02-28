@@ -24,6 +24,15 @@ const configs = {
     server: {
         socketIoPort: process.env.SIO_PORT,
         httpPort: process.env.HTTP_PORT
+    },
+    lambdaUrls: { 
+        /*
+        TODO: lambda에 대한 부분 .env에 추가해야함
+        SENSORBOX=https://3hu37ei2ieqgwo5tpqqbjkrhfy0answm.lambda-url.ap-northeast-2.on.aws/
+        YONGIN_CAMERA=https://hbbbcwsqbealfcfrmu7e5hluia0huqwu.lambda-url.ap-northeast-2.on.aws/
+        */
+        sensorbox: process.env.SENSORBOX,
+        yongin_camera: process.env.YONGIN_CAMERA
     }
 };
 

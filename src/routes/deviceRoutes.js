@@ -1,9 +1,7 @@
 const express = require('express');
+const checkTokenMiddleware = require('./middleware/checkTokenMiddleware');
 const router = express.Router();
-const deviceController = require('../controller/deviceController');
 
-router.get('/devices', deviceController.listDevices);
-router.post('/devices', deviceController.registerDevice);
-// 추가 라우트 정의
+router.use('/upload', checkTokenMiddleware);
 
 module.exports = router;
