@@ -30,7 +30,9 @@ express애플리케이션 생성
 http서버 생성
 socket.io 초기화
 
+db초기화
 미들웨어 실행
 라우터 연결 
 port번호 설정
+
 */
