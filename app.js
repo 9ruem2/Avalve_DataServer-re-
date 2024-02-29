@@ -6,17 +6,21 @@ const errorHandler = require('./infrastructure/errorHandling/errorHandler');
 const logger = require('./infrastructure/logger');
 const configs = require('./config/configs');
 const db = require('./repository/deviceRepository');
-const dbConfigs = requie('./config/dbConfigs')
+const dbConfig = require('./config/dbConfig')
 
 
 const app = express();
-const server = http.createServer(app);
 const io = socketIO(server);
 
 app.use(express.json());
 app.use(errorHandler);
 
-db.connect();
+// 데이터베이스 연결 생성
+const conn = dbConfig.createConnection();
+
+
+
+
 
 socketEvents(io);
 
