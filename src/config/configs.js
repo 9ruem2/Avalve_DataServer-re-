@@ -21,6 +21,7 @@ const configs = {
         password: process.env.DB_PASSWORD
     },
     manufacturer: process.env.MFR_KEY,
+    
     server: {
         socketIoPort: process.env.SIO_PORT,
         httpPort: process.env.HTTP_PORT
@@ -32,7 +33,7 @@ const configs = {
         YONGIN_CAMERA=https://hbbbcwsqbealfcfrmu7e5hluia0huqwu.lambda-url.ap-northeast-2.on.aws/
         */
         sensorbox: process.env.SENSORBOX,
-        yongin_camera: process.env.YONGIN_CAMERA
+        yonginCamera: process.env.YONGIN_CAMERA
     }
 };
 

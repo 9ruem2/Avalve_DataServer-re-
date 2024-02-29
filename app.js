@@ -1,10 +1,13 @@
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
+
 const errorHandler = require('./infrastructure/errorHandling/errorHandler');
 const logger = require('./infrastructure/logger');
 const configs = require('./config/configs');
-const db = require('./repository/deviceRepository')
+const db = require('./repository/deviceRepository');
+const dbConfigs = requie('./config/dbConfigs')
+
 
 const app = express();
 const server = http.createServer(app);

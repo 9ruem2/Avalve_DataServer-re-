@@ -1,4 +1,4 @@
-const db = require('../infrastructure/database');
+const dbConfig = require('./dbConfig');
 
 exports.findAll = async () => {
     const devices = await db.query('SELECT * FROM devices');

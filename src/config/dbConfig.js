@@ -1,6 +1,7 @@
+// dbConfig.js
 const mysql = require('mysql');
-const configs = require('./configs'); // 가정한 설정 파일
-const logger = require('./logger'); // 로거 설정
+const configs = require('./configs');
+const logger = require('./logger');
 
 const dbInfo = {
   host: configs.DB_HOST,
@@ -9,7 +10,7 @@ const dbInfo = {
   database: configs.DB_NAME
 };
 
-exports.createConnection = () => {
+const createConnection = () => {
   const connection = mysql.createConnection(dbInfo);
   connection.connect(err => {
     if (err) {
@@ -21,7 +22,7 @@ exports.createConnection = () => {
   return connection;
 };
 
-exports.disconnect = (connection) => {
+const disconnect = (connection) => {
   if (connection) {
     connection.end(err => {
       if (err) {
@@ -31,4 +32,26 @@ exports.disconnect = (connection) => {
       logger.info('MySQL is disconnected');
     });
   }
+};
+
+const init = (connection) => {
+  // 데이터베이스 초기화 로직, 테이블 생성 등
+  const initQueries = [
+    'CREATE TABLE IF NOT EXISTS ...;',
+  ];
+
+  initQueries.forEach(query => {
+    connection.query(query, (err, results) => {
+      if (err) {
+        logger.error('Error during database initialization: ' + err);
+        return;
+      }
+    });
+  });
+};
+
+module.exports = {
+  createConnection,
+  disconnect,
+  init
 };
