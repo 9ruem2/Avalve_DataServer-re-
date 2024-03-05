@@ -1,5 +1,7 @@
 const winston = require('winston');
-const configs = require('../../config/configs');
+const logDir = logs;
+const winstonDaily = require('winston-daily-rotate-file');
+
 
 const logger = winston.createLogger({
 });

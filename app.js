@@ -1,45 +1,52 @@
 const express = require('express');
 const http = require('http');
-const socketIO = require('socket.io');
+const socketIo = require('socket.io');
 
-const errorHandler = require('./infrastructure/errorHandling/errorHandler');
-const logger = require('./infrastructure/logger');
-const configs = require('./config/configs');
-const db = require('./repository/deviceRepository');
-const dbConfig = require('./config/dbConfig')
-
+const socketRouter = require('./src/routes/socketRoutes');
+const setupSocketAuthMiddleware = require('./src/middleware/socketMiddleware');
+const logger = require('./src/infrastructure/logger/logger')(module);
+const configs = require('./src/config/configs');
+const dbConfig = require('./src/config/dbConfig');
 
 const app = express();
-const io = socketIO(server);
-
-app.use(express.json());
-app.use(errorHandler);
-
-// 데이터베이스 연결 생성
-const conn = dbConfig.createConnection();
 
 
 
+// 서버 시작 로직을 비동기 함수로 처리
+async function startServer() { 
+    try {
+        // 데이터베이스 초기화, 연결
+        const conn = await dbConfig.initializeDatabase();
+        logger.info('Database successfully initialized');
+
+        // HTTP 서버 및 소켓 서버 설정
+        const server = http.createConnection(app);
+        const io = socketIo(server);
+
+        // socketMiddleware 실행
+        const socketMiddleware = setupSocketAuthMiddleware(io,conn);
+        io.use(socketMiddleware);
+        
+        // socket 'connetion'이벤트 발생
+        io.on('connection', (socket) => {
+            logger.info(`${socket.owner}-${socket.name} connected`);
+            
+            // 라우터 실행 시작
+            // socketRouter(socket);
+        });
+
+        // 서버 시작
+        const PORT = configs.PORT;
+        server.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
+        
+    } catch (err) {
+        logger.error('Failed to start server:', err);
+    }
+}
+
+startServer();
 
 
-socketEvents(io);
-
-
-const PORT = configs.HTTP_PORT;
-app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
 
 
 
-/*
-필요한 모듈 import
-데이터베이스 설정 객체 생성 및 초기화
-express애플리케이션 생성
-http서버 생성
-socket.io 초기화
-
-db초기화
-미들웨어 실행
-라우터 연결 
-port번호 설정
-
-*/
