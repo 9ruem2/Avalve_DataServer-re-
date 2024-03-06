@@ -1,4 +1,4 @@
-const logger = require('../src/infrastructure/logger/logger')(module);
+const logger = require('../config/loggerConfig')(module);
 const configs = require('../config/configs');
 const deviceRepository = require('../repository/deviceRepository');
 

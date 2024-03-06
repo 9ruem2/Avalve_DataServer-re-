@@ -2,9 +2,9 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 
-const socketRouter = require('./src/routes/socketRoutes');
+// const socketRouter = require('./src/routes/socketRoutes');
 const setupSocketAuthMiddleware = require('./src/middleware/socketMiddleware');
-const logger = require('./src/infrastructure/logger/logger')(module);
+const logger = require('./src/config/loggerConfig')(module);
 const configs = require('./src/config/configs');
 const dbConfig = require('./src/config/dbConfig');
 
@@ -20,7 +20,7 @@ async function startServer() {
         logger.info('Database successfully initialized');
 
         // HTTP 서버 및 소켓 서버 설정
-        const server = http.createConnection(app);
+        const server = http.createServer(app);
         const io = socketIo(server);
 
         // socketMiddleware 실행
@@ -31,7 +31,7 @@ async function startServer() {
         io.on('connection', (socket) => {
             logger.info(`${socket.owner}-${socket.name} connected`);
             
-            // 라우터 실행 시작
+            // TODO: 라우터 실행 시작
             // socketRouter(socket);
         });
 

@@ -1,12 +1,12 @@
 const mysql = require('mysql');
-const util = require('util'); // util 모듈 추가
+const util = require('util'); 
 const configs = require('./configs');
-const logger = require('./logger');
+const logger = require('./loggerConfig')(module);
 const dbInfo = { 
-  host: configs.DB_HOST,
-  user: configs.DB_USER,
-  password: configs.DB_PASSWORD,
-  database: configs.DB_NAME
+  host: configs.database.host,
+  user: configs.database.user,
+  password: configs.database.password,
+  database: configs.database.name
 };
 
 const dbConfig = {
@@ -25,6 +25,7 @@ const dbConfig = {
       logger.info("DB init success");
 
       return connection;
+
     } catch (err) {
       logger.error('Initialization failed: ' + err.message);
       throw err;

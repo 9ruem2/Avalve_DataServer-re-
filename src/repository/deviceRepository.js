@@ -1,3 +1,4 @@
+const mysql = require('mysql');
 
 module.exports = {
     findDeviceByOwnerAndName: (deviceOwnerId, deviceName, conn) => {
