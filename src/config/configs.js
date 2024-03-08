@@ -23,8 +23,7 @@ const configs = {
     smartFarmManufacturer: process.env.SMART_FARM_MANUFACTURER,
     
     server: {
-        socketIoPort: process.env.SIO_PORT, //TODO: 없애야 할지도
-        httpPort: process.env.HTTP_PORT
+        port: process.env.PORT
     },
     lambdaUrls: { 
         sensorbox: process.env.SENSORBOX,
