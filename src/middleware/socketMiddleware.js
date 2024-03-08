@@ -81,10 +81,10 @@ module.exports = (io, dbConnection ) => {
     
             if (socket.clientDeviceUuid == deviceResult[0].device_uuid) {
                 // 일치하는 장치가 있고, UUID가 일치하는 경우
-                logger.info(`[${socket.uuid}] ${socket.clientDeviceOwnerId}-${socket.clientDeviceName} UUID match`);
+                logger.info(`[${socket.clientDeviceUuid}] ${socket.clientDeviceOwnerId}-${socket.clientDeviceName} UUID match`);
                 next();
             } else {
-                throw new Error(`[${socket.uuid}] ${socket.clientDeviceOwnerId}-${socket.clientDeviceName} UUID not match`);
+                throw new Error(`[${socket.clientDeviceUuid}] ${socket.clientDeviceOwnerId}-${socket.clientDeviceName} UUID not match`);
             }
         } catch (error) {
             logger.error(`${error.message}`);
@@ -96,12 +96,14 @@ module.exports = (io, dbConnection ) => {
     io.use(async (socket, next) => {
         try {
             const deviceResult = await deviceRepository.findDeviceByOwnerAndName(socket.clientDeviceOwnerId, socket.clientDeviceName, dbConnection );
+            console.log(deviceResult);
             sessionExistence = deviceResult[0].session_exist;
             perAccess = deviceResult[0].per_access;
 
             if(sessionExistence == 0 && perAccess == 1) {
                 deviceRepository.updateSessionStatus(socket.clientDeviceOwnerId, socket.clientDeviceName, dbConnection );
                 logger.info(`Device ${socket.clientDeviceOwnerId}-${socket.clientDeviceName} is now ready for access.`);
+                next();
             } else {
                 throw new Error(`Failed to set access permission for device ${socket.clientDeviceOwnerId}-${socket.clientDeviceName}.`);
             }

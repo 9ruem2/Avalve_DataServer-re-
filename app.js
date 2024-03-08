@@ -3,10 +3,12 @@ const http = require('http');
 const socketIo = require('socket.io');
 
 const tokenRouter = require('./src/routes/tokenRouter');
+const uploadRouter = require('./src/routes/uploadRoutes');
 const setupSocketAuthMiddleware = require('./src/middleware/socketMiddleware');
 const logger = require('./src/config/loggerConfig')(module);
 const configs = require('./src/config/configs');
 const dbConfig = require('./src/config/dbConfig');
+const uploadConfig = require('./src/config/uploadConfig');
 
 const app = express();
 
@@ -29,10 +31,14 @@ async function startServer() {
         
         // socket 'connetion'이벤트 발생
         io.on('connection', (socket) => {
-            logger.info(`${socket.owner}-${socket.name} connected`);
+            logger.info(`${socket.clientDeviceOwnerId}-${socket.clientDeviceName} connected`);
 
             // token생성 및 등록과 관련한 라우터 실행
             tokenRouter(socket,io,dbConnection);
+
+            // image, json upload 라우터 실행
+            const s3UploaderConfig = uploadConfig.
+            uploadRouter(uploadConfig, dbConnection);
         });
 
         // 서버 시작
