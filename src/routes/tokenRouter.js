@@ -8,6 +8,4 @@ module.exports = (socket, io, dbConnection ) => {
         tokenController.makeToken(socket, io, dbConnection );
         console.log(`Received make_token event with data: ${data}`);
     });
-
-    
 };

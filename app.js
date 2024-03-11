@@ -8,7 +8,8 @@ const setupSocketAuthMiddleware = require('./src/middleware/socketMiddleware');
 const logger = require('./src/config/loggerConfig')(module);
 const configs = require('./src/config/configs');
 const dbConfig = require('./src/config/dbConfig');
-const uploadConfig = require('./src/config/uploadConfig');
+const setupUploadMiddleware = require('./src/middleware/uploadMiddleware');
+const deviceRepository = require('./src/repository/deviceRepository');
 
 const app = express();
 
@@ -35,11 +36,25 @@ async function startServer() {
 
             // token생성 및 등록과 관련한 라우터 실행
             tokenRouter(socket,io,dbConnection);
-
-            // image, json upload 라우터 실행
-            const s3UploaderConfig = uploadConfig.
-            uploadRouter(uploadConfig, dbConnection);
         });
+
+        // '/upload' 라우터 등록
+        const uploadMiddleware = setupUploadMiddleware(dbConnection);
+        app.use('/upload', uploadMiddleware, uploadRouter);
+
+
+        // 클라이언트 소켓 연결 끊김, 토큰 초기화
+        socket.on('disconnect', () => {
+            deviceRepository.initializeDeviceState(socket.clientDeviceOwnerId, socket.clientDeviceName, dbConnection);
+            logger.info("%s-%s disconnected and client status reset", socket.owner, socket.name);
+        });
+
+        // 데이터베이스 연결을 활성 상태로 유지하기 위한 refreshDbConnection 로직 실행
+        setInterval(() => {
+            deviceRepository.refreshDbConnection(dbConnection)
+                .then(() => logger.info('refreshDbConnection executed successfully.'))
+                .catch(err => logger.error('refreshDbConnection execution failed:', err));
+        }, 1000 * 60 * 5);
 
         // 서버 시작
         const PORT = configs.server.port;
