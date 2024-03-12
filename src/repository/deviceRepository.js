@@ -1,5 +1,6 @@
 
 const util = require('util');
+const logger = require('../config/loggerConfig')(module);
 
 module.exports = {
     findDeviceByOwnerAndName: async (clientDeviceOwnerId, clientDeviceName, dbConnection) => {

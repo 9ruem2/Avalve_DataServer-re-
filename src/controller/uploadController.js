@@ -1,13 +1,13 @@
-const uploadService = require('../service/uploadService');
+const s3Service = require('../infrastructure/aws/s3Service');
 
-exports.uploadImage = async (req, res) => {
-    const file = req.file;
-    const result = await uploadService.uploadImage(file);
-    res.json(result);
-};
 
-exports.uploadJson = async (req, res) => {
-    const file = req.file;
-    const result = await uploadService.uploadJson(file);
-    res.json(result);
-};
+module.exports = {
+    checkUploadStatusHeader: (req, res, dbConnection) => {
+        s3Service.checkUploadStatusHeader(req,dbConnection);
+        res.status(200).json({'message': 'Starting to check the header value'});
+    }
+
+}
+
+
+
