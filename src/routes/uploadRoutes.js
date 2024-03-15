@@ -7,10 +7,11 @@ module.exports = function setupUploadRouter(dbConnection) {
     router.head('/upload_status', (req,res) => 
         uploadController.checkUploadStatusHeader(req, res, dbConnection));
 
-    router.post('/json/2.1', (req, res) => 
-        uploadController.uploadJson(req, res, dbConnection));
+    router.post('/image', (req, res) => 
+        uploadController.uploadImage(req, res, dbConnection));
 
-        
+    router.post('/json', (req, res) => 
+        uploadController.uploadJson(req, res, dbConnection));
 
     
     return router;

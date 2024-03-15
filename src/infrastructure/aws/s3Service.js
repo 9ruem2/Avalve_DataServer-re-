@@ -1,21 +1,24 @@
 const axios = require('axios');
-const logger = require('../config/loggerConfig')(module);
+const logger = require('../../config/loggerConfig')(module);
 const deviceRepository = require('../../repository/deviceRepository');
 const config = require('../../config/configs');
+const uploadConfig = require('../../config/uploadConfig');
 
+const uploadSingleImage = uploadConfig.single('file');
+const uploadSingleJson = uploadConfig.single('file');
 
 // 파일 리스트를 관리하는 클래스
 class FileListManager {
   constructor() {
+    this.yonginCameraJsonFiles = []; // yongin_camera 디바이스에서 업로드된 JSON 파일 목록
     this.sensorboxJsonFiles = []; // Sensorbox 디바이스에서 업로드된 JSON 파일 목록
     this.allUploadedJsonFiles = []; // 모든 디바이스에서 업로드된 JSON 파일 목록
-    this.yonginCameraJsonFiles = []; // yongin_camera 디바이스에서 업로드된 JSON 파일 목록
   }
 
   addFile(deviceName, fileName) {
-    if (deviceName === "Sensorbox") {
+    if (deviceName == "Sensorbox") {
       this.sensorboxJsonFiles.push(fileName);
-    } else if (deviceName === "yongin_camera") {
+    } else if (deviceName == "yongin_camera") {
       this.yonginCameraJsonFiles.push(fileName);
     }
     this.allUploadedJsonFiles.push(fileName);
@@ -110,11 +113,13 @@ module.exports = {
 
     if (uploadObjectCreated) {
       await uploadObjectCreated.execute(req, dbConnection);
-      res.status(200).send('Upload status processed successfully');
     } else {
       logger.error('Undefined upload status');
-      res.status(400).send('Undefined upload status');
     }
+  },
+
+  uploadImage: async(req, res, dbConnection) => {
+    uploadConfig(req, res, dbConnection);
   }
 
 };

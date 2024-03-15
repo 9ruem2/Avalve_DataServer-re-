@@ -52,8 +52,8 @@ module.exports = {
          0: 서버로 접속할 수 없는 상태
      */
     initializeDeviceState: async (clientDeviceOwnerId, clientDeviceName, dbConnection) => {
-        const sql = 'UPDATE DEVICES SET HTTP_token = ?, Session_exist = ? WHERE Device_owner_id = ? AND Device_name = ?';
-        const params = [null, 0, clientDeviceOwnerId, clientDeviceName];
+        const sql = 'UPDATE DEVICES SET HTTP_token = ?, http_access = ?, Session_exist = ? WHERE Device_owner_id = ? AND Device_name = ?';
+        const params = [null, 0, 0, clientDeviceOwnerId, clientDeviceName];
     
         try {
             const result = await dbConnection.query(sql, params);
@@ -93,13 +93,14 @@ module.exports = {
         }
     },
 
-    clearHttpAccessByToken: async (clientUuidToken, dbConnection){
+    clearHttpAccessByToken: async (clientUuidToken, dbConnection) => {
         const sql = 'UPDATE DEVICES SET HTTP_token = ?, HTTP_access = ? WHERE HTTP_token = ?';
         const params = [null, 0, clientUuidToken];
 
         try{
             const result = await dbConnection.query(sql, params);
             logger.info("DB init upload status success");
+            return result;
         } catch (err) {
             logger.error("An error occurred during the database operation: %s", err.message);
             throw err;
