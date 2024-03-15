@@ -1,6 +1,7 @@
 {
     "dependencies": {
         "aws-sdk": "^2.1357.0",
+        "axios": "^1.6.7",
         "dotenv": "^16.0.3",
         "express": "^4.18.2",
         "moment-timezone": "^0.5.43",

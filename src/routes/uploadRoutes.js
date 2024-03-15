@@ -3,7 +3,16 @@ const uploadController = require('../controller/uploadController');
 
 module.exports = function setupUploadRouter(dbConnection) {
     const router = express.Router();
-    router.head('/upload_status', (req,res) => uploadController.checkUploadStatusHeader(req, res, dbConnection));
+    
+    router.head('/upload_status', (req,res) => 
+        uploadController.checkUploadStatusHeader(req, res, dbConnection));
+
+    router.post('/json/2.1', (req, res) => 
+        uploadController.uploadJson(req, res, dbConnection));
+
+        
+
+    
     return router;
 }
 

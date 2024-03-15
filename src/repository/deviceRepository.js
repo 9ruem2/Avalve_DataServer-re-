@@ -43,12 +43,20 @@ module.exports = {
         }
     },
 
+    /*
+    session_exist(세션 존재 여부)
+        1: 소켓이 연결되어 있음
+        0: 소켓이 연결되어 있지 않음
+    per_access(서버로 접속 가)
+         1: 서버로 접속 가능한 상태
+         0: 서버로 접속할 수 없는 상태
+     */
     initializeDeviceState: async (clientDeviceOwnerId, clientDeviceName, dbConnection) => {
         const sql = 'UPDATE DEVICES SET HTTP_token = ?, Session_exist = ? WHERE Device_owner_id = ? AND Device_name = ?';
         const params = [null, 0, clientDeviceOwnerId, clientDeviceName];
     
         try {
-            const [result] = await dbConnection.query(sql, params);
+            const result = await dbConnection.query(sql, params);
             return result; 
         } catch (err) {
             logger.error(`Failed to initialize client status for device '${clientDeviceOwnerId}-${clientDeviceName}' in the database. Error: ${err}`);
@@ -61,12 +69,41 @@ module.exports = {
         const query = util.promisify(dbConnection.query).bind(dbConnection);
 
         try {
-            const results = await query('SELECT 1');
-            console.log('Keepalive query succeeded');
-            return results;
+            const result = await query('SELECT 1');
+            logger.info('Keepalive query succeeded');
+            return result;
         } catch (err) {
-            console.error('Keepalive query failed:', err);
+            logger.error('Keepalive query failed:', err);
+            throw err;
+        }
+    },
+
+    updateHttpAccessStatusToEnabled: async (clientUuidToken, dbConnection) => {
+        const sql = 'UPDATE DEVICES SET http_access = ? WHERE http_token = ?';
+        const params = [1, clientUuidToken];
+    
+        logger.info(`Attempting to enable HTTP access for device with token: ${clientUuidToken}`);
+        try {
+            const result = await dbConnection.query(sql, params); 
+            logger.info(`HTTP access successfully enabled for device with token: ${clientUuidToken}`);
+            return result;
+        } catch (err) {
+            logger.error(`Error enabling HTTP access for device with token: ${clientUuidToken}. Error: ${err.message}`);
+            throw err;
+        }
+    },
+
+    clearHttpAccessByToken: async (clientUuidToken, dbConnection){
+        const sql = 'UPDATE DEVICES SET HTTP_token = ?, HTTP_access = ? WHERE HTTP_token = ?';
+        const params = [null, 0, clientUuidToken];
+
+        try{
+            const result = await dbConnection.query(sql, params);
+            logger.info("DB init upload status success");
+        } catch (err) {
+            logger.error("An error occurred during the database operation: %s", err.message);
             throw err;
         }
     }
+    
 };
