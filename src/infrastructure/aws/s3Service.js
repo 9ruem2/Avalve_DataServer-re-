@@ -119,7 +119,7 @@ module.exports = {
   },
 
   uploadImage: async(req, res, dbConnection) => {
-    uploadConfig(req, res, dbConnection);
+    uploadConfig(req, res, );
   }
 
 };
