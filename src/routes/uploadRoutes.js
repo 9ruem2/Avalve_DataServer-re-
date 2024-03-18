@@ -8,7 +8,7 @@ module.exports = function setupUploadRouter(dbConnection) {
         uploadController.checkUploadStatusHeader(req, res, dbConnection));
 
     router.post('/image', (req, res) => 
-        uploadController.uploadImage(req, res, dbConnection));
+        uploadController.uploadImage(req, res));
 
     router.post('/json', (req, res) => 
         uploadController.uploadJson(req, res, dbConnection));

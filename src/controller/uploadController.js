@@ -13,17 +13,22 @@ module.exports = {
         }
     },
 
-    // uploadJson: async (req, res, dbConnection) => {
-    //     try {
-
-    //     }
-    // }
-
-    uploadImage: async (req, res, dbConnection) => {
+    uploadJson: async (req, res) => {
         try {
-            await s3Service.uploadImage(req, res, dbConnection);
+            await s3Service.uploadJson(req, res);
+            logger.info('upload request Json controller To service');
+            res.status(200).send('Json upload successfully');
+        } catch(error) {
+            logger.error(error);
+            res.status(500).send('Json upload failed')
+        }
+    },
+
+    uploadImage: async (req, res) => {
+        try {
+            await s3Service.uploadImage(req, res);
             logger.info('upload request image controller To service');
-            res.status(200).send('upload successfully');
+            res.status(200).send('Image upload successfully');
         } catch(error) {
             logger.error(error);
             res.status(500).send('Image upload failed.');

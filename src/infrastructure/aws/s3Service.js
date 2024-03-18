@@ -1,11 +1,13 @@
 const axios = require('axios');
+const util = require('util');
 const logger = require('../../config/loggerConfig')(module);
 const deviceRepository = require('../../repository/deviceRepository');
 const config = require('../../config/configs');
 const uploadConfig = require('../../config/uploadConfig');
 
-const uploadSingleImage = uploadConfig.single('file');
-const uploadSingleJson = uploadConfig.single('file');
+const uploadSingleImage = uploadConfig().single('file');
+const uploadSingleJson = uploadConfig().single('file');
+
 
 // 파일 리스트를 관리하는 클래스
 class FileListManager {
@@ -118,8 +120,24 @@ module.exports = {
     }
   },
 
-  uploadImage: async(req, res, dbConnection) => {
-    uploadConfig(req, res, );
+  uploadImage: async(req, res) => {
+    try {
+      await uploadSingleImage(req, res);
+      logger.info(`${req.headers.device_owner}-${req.headers.device_name} image: ${req.file.originalname}`);
+    } catch(err) {
+      logger.error(`${req.headers.device_owner}-${req.headers.device_name} upload(img) error`);
+      throw err;
+    }
+  },
+
+  uploadJson: async(req, res) => {
+    try {
+      await uploadSingleJson(req, res);
+      logger.info(`${req.headers.device_owner}-${req.headers.device_name} json ${req.file.originalname}`);
+      fileListManager.addFile(req.headers.device_name, req.file.originalname);
+    } catch(err) {
+      logger.error(`${req.headers.device_owner}-${req.headers.device_name} upload(json) error: ${err.message}`);
+    }
   }
 
 };

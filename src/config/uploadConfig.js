@@ -22,6 +22,7 @@ module.exports = () => {
         metadata: (req, file, cb) => {
             cb(null, { fieldName: file.fieldname });
         },
+        // 파일의 최종 경로와 이름 결정
         key: (req, file, cb) => {
             const prefix = 'Smartfarm';
             const { device_owner: deviceOwner, device_name: deviceName } = req.headers;
