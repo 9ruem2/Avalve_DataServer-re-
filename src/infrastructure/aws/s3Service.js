@@ -45,15 +45,15 @@ class UploadInterface {
 class UploadStart extends UploadInterface {
   async execute(req, dbConnection) {
     logger.info("(HEAD) upload start");
-    await deviceRepository.updateHttpAccessStatusToEnabled(req.headers.token, dbConnection);
+    await deviceRepository.updateStatusHttpAccess(req.headers.token, dbConnection);
   }
 }
 
 // 'upload_finish' 
 class UploadFinish extends UploadInterface { 
-  constructor(FileListManager) {
+  constructor(fileListManager) {
     super();
-    this.FileListManager = FileListManager;
+    this.fileListManager = fileListManager;
   }
 
   async execute(req, dbConnection) {
@@ -67,11 +67,11 @@ class UploadFinish extends UploadInterface {
 
     switch (deviceName) {
       case 'Sensorbox':
-        lambdaUrl = config.lambdaUrls.SENSORBOX;
+        lambdaUrl = config.lambdaUrls.sensorbox;
         jsonUploadList = this.fileListManager.sensorboxJsonFiles;
         break;
       case 'yongin_camera':
-        lambdaUrl = config.lambdaUrls.YONGIN_CAMERA;
+        lambdaUrl = config.lambdaUrls.yonginCamera;
         jsonUploadList = this.fileListManager.yonginCameraJsonFiles;
         break;
       default:
@@ -110,7 +110,7 @@ const makeUploadObject = {
 
 module.exports = {
   // 클라이언트의 header.status를 확인하여 youngin_camera, sensorbox를 lambda로 실행
-  checkUploadStatusHeader: async (req, dbConnection) => {
+  checkUploadStatusHeader: async (req, res, dbConnection) => {
     const uploadObjectCreated = makeUploadObject[req.headers.status];
 
     if (uploadObjectCreated) {

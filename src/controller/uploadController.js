@@ -5,7 +5,7 @@ module.exports = {
     checkUploadStatusHeader: async (req, res, dbConnection) => {
         try {
             await s3Service.checkUploadStatusHeader(req, res, dbConnection);
-            logger.info('upload request header status controller To service');
+            logger.info('upload request header status successfully.');
             res.status(200).send('Upload status checked successfully');
         } catch(error) {
             logger.error('Error procession upload status', error);
@@ -16,7 +16,7 @@ module.exports = {
     uploadJson: async (req, res, dbConnection) => {
         try {
             await s3Service.uploadJson(req, res, dbConnection);
-            // logger.info(`JSON file uploaded successfully. Filename: ${req.file.originalname}, Size: ${req.file.size} bytes, Bucket: ${config.aws.s3Bucket}, Timestamp: ${new Date().toISOString()}`);
+            logger.info(`JSON file uploaded successfully. Filename: ${req.file.originalname}, Size: ${req.file.size} bytes, Bucket: ${config.aws.s3Bucket}, Timestamp: ${new Date().toISOString()}`);
             res.status(200).send('Json upload successfully');
         } catch(error) {
             logger.error(error);
