@@ -124,6 +124,7 @@ module.exports = {
     try {
       await uploadSingleImage(req);
       logger.info(`${req.headers.device_owner}-${req.headers.device_name} image: ${req.file.originalname}`);
+      next();
     } catch(err) {
       logger.error(`${req.headers.device_owner}-${req.headers.device_name} upload(img) error`);
       throw err;
