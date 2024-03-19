@@ -3,7 +3,8 @@ const util = require('util');
 const logger = require('../config/loggerConfig')(module);
 
 module.exports = {
-    findDeviceByOwnerAndName: async (clientDeviceOwnerId, clientDeviceName, dbConnection) => {
+    // 데이터베이스에서 특정 소유자 ID와 기기 이름을 기준으로 검색 ex) 안동이면서 용인 카메라인 것을 조회
+    findDeviceNameByOwnerId: async (clientDeviceOwnerId, clientDeviceName, dbConnection) => {
         const sql = 'SELECT * FROM DEVICES WHERE Device_owner_id = ? AND Device_name = ?';
         const params = [clientDeviceOwnerId, clientDeviceName];
         const query = util.promisify(dbConnection.query).bind(dbConnection);
@@ -52,7 +53,7 @@ module.exports = {
          0: 서버로 접속할 수 없는 상태
      */
     initializeDeviceState: async (clientDeviceOwnerId, clientDeviceName, dbConnection) => {
-        const sql = 'UPDATE DEVICES SET HTTP_token = ?, http_access = ?, Session_exist = ? WHERE Device_owner_id = ? AND Device_name = ?';
+        const sql = 'UPDATE DEVICES SET http_token = ?, http_access = ?, session_exist = ? WHERE device_owner_id = ? AND device_name = ?';
         const params = [null, 0, 0, clientDeviceOwnerId, clientDeviceName];
     
         try {

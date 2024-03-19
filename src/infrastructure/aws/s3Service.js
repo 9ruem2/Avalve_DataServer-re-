@@ -5,8 +5,8 @@ const deviceRepository = require('../../repository/deviceRepository');
 const config = require('../../config/configs');
 const uploadConfig = require('../../config/uploadConfig');
 
-const uploadSingleImage = uploadConfig().single('file');
-const uploadSingleJson = uploadConfig().single('file');
+const uploadSingleImage = uploadConfig().single('imageFile');
+const uploadSingleJson = uploadConfig().single('jsonFile');
 
 
 // 파일 리스트를 관리하는 클래스
@@ -110,7 +110,7 @@ const makeUploadObject = {
 
 module.exports = {
   // 클라이언트의 header.status를 확인하여 youngin_camera, sensorbox를 lambda로 실행
-  checkUploadStatusHeader: async (req, res, dbConnection) => {
+  checkUploadStatusHeader: async (req, dbConnection) => {
     const uploadObjectCreated = makeUploadObject[req.headers.status];
 
     if (uploadObjectCreated) {
@@ -120,9 +120,9 @@ module.exports = {
     }
   },
 
-  uploadImage: async(req, res) => {
+  uploadImage: async(req, res, next) => {
     try {
-      await uploadSingleImage(req, res);
+      await uploadSingleImage(req);
       logger.info(`${req.headers.device_owner}-${req.headers.device_name} image: ${req.file.originalname}`);
     } catch(err) {
       logger.error(`${req.headers.device_owner}-${req.headers.device_name} upload(img) error`);
@@ -130,9 +130,9 @@ module.exports = {
     }
   },
 
-  uploadJson: async(req, res) => {
+  uploadJson: async(req, res, next) => {
     try {
-      await uploadSingleJson(req, res);
+      await uploadSingleJson(req);
       logger.info(`${req.headers.device_owner}-${req.headers.device_name} json ${req.file.originalname}`);
       fileListManager.addFile(req.headers.device_name, req.file.originalname);
     } catch(err) {

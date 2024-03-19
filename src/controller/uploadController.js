@@ -13,10 +13,10 @@ module.exports = {
         }
     },
 
-    uploadJson: async (req, res) => {
+    uploadJson: async (req, res, dbConnection) => {
         try {
-            await s3Service.uploadJson(req, res);
-            logger.info('upload request Json controller To service');
+            await s3Service.uploadJson(req, res, dbConnection);
+            // logger.info(`JSON file uploaded successfully. Filename: ${req.file.originalname}, Size: ${req.file.size} bytes, Bucket: ${config.aws.s3Bucket}, Timestamp: ${new Date().toISOString()}`);
             res.status(200).send('Json upload successfully');
         } catch(error) {
             logger.error(error);
@@ -24,10 +24,10 @@ module.exports = {
         }
     },
 
-    uploadImage: async (req, res) => {
+    uploadImage: async (req, res, dbConnection) => {
         try {
-            await s3Service.uploadImage(req, res);
-            logger.info('upload request image controller To service');
+            await s3Service.uploadImage(req, res, dbConnection);
+            logger.info(`Image file uploaded successfully. Filename: ${req.file.originalname}, Size: ${req.file.size} bytes, Bucket: ${config.aws.s3Bucket}, Timestamp: ${new Date().toISOString()}`);
             res.status(200).send('Image upload successfully');
         } catch(error) {
             logger.error(error);

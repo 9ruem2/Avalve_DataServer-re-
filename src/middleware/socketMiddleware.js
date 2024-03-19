@@ -61,7 +61,7 @@ module.exports = (io, dbConnection ) => {
     // 미들웨어(3): clientDeviceOwnerId와 clientDeviceName이 데이터베이스와 모두 일치하는 레코드가 있는지 확인
     io.use(async (socket, next) => {
         try {
-            const deviceResult = await deviceRepository.findDeviceByOwnerAndName(socket.clientDeviceOwnerId, socket.clientDeviceName, dbConnection );
+            const deviceResult = await deviceRepository.findDeviceNameByOwnerId(socket.clientDeviceOwnerId, socket.clientDeviceName, dbConnection );
             
             if (deviceResult.length > 0) {
                 next();
@@ -77,7 +77,7 @@ module.exports = (io, dbConnection ) => {
     // 미들웨어(4): clientDeviceUuid와 서버에 저장된 DeviceUuid와 일치하는지 확인하는지 확인
     io.use(async (socket, next) => {
         try {
-            const deviceResult = await deviceRepository.findDeviceByOwnerAndName(socket.clientDeviceOwnerId, socket.clientDeviceName, dbConnection );
+            const deviceResult = await deviceRepository.findDeviceNameByOwnerId(socket.clientDeviceOwnerId, socket.clientDeviceName, dbConnection );
     
             if (socket.clientDeviceUuid == deviceResult[0].device_uuid) {
                 // 일치하는 장치가 있고, UUID가 일치하는 경우
@@ -95,7 +95,7 @@ module.exports = (io, dbConnection ) => {
     // 미들웨어(5): 데이터베이스 접속 준비 가능 상태 per_access = 1 && 데이터베이스 접속 된 상태 session_exist = 1
     io.use(async (socket, next) => {
         try {
-            const deviceResult = await deviceRepository.findDeviceByOwnerAndName(socket.clientDeviceOwnerId, socket.clientDeviceName, dbConnection );
+            const deviceResult = await deviceRepository.findDeviceNameByOwnerId(socket.clientDeviceOwnerId, socket.clientDeviceName, dbConnection );
             console.log(deviceResult);
             sessionExistence = deviceResult[0].session_exist;
             perAccess = deviceResult[0].per_access;

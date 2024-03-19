@@ -4,11 +4,11 @@ const uploadController = require('../controller/uploadController');
 module.exports = function setupUploadRouter(dbConnection) {
     const router = express.Router();
     
-    router.head('/upload_status', (req,res) => 
+    router.head('/status', (req,res) => 
         uploadController.checkUploadStatusHeader(req, res, dbConnection));
 
     router.post('/image', (req, res) => 
-        uploadController.uploadImage(req, res));
+        uploadController.uploadImage(req, res, dbConnection));
 
     router.post('/json', (req, res) => 
         uploadController.uploadJson(req, res, dbConnection));

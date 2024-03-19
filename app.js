@@ -54,7 +54,7 @@ async function startServer() {
 
         // '/upload' 라우터 등록
         const uploadRouter = setupUploadRouter(dbConnection);
-        app.use('/upload', uploadMiddleware, uploadRouter);
+        app.use('/uploads', uploadMiddleware, uploadRouter);
 
         // 데이터베이스 연결을 활성 상태로 유지하기 위한 refreshDbConnection 로직 실행
         setInterval(() => {

@@ -5,7 +5,6 @@ require("dotenv").config();
 const configs = {
     aws: {
         s3Bucket: process.env.S3_BUCKET_LOCATION,
-        s3BucketPfc: process.env.S3_BUCKET_LOCATION_PFC,
         accessKeyId: process.env.AWS_ACCESS_KEY,
         secretAccessKey: process.env.AWS_SECRET_KEY,
         region: process.env.REGION

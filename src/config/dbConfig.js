@@ -10,6 +10,7 @@ const dbInfo = {
 };
 
 const dbConfig = {
+  // 데이터베이스 생성 및 Session_exist 0으로 초기화
   initializeDatabase: async () => {
     try {
       const connection = mysql.createConnection(dbInfo); 

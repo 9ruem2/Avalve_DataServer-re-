@@ -6,7 +6,7 @@ const logger = require('../config/loggerConfig')(module);
 module.exports = function setupUploadMiddleware(dbConnection) {
     return async (req, res, next) => {
         try {
-            const result = await deviceRepository.findDeviceByOwnerAndName(req.headers.device_owner, req.headers.device_name, dbConnection);
+            const result = await deviceRepository.findDeviceNameByOwnerId(req.headers.device_owner, req.headers.device_name, dbConnection);
             if (result.length > 0 && result[0].http_token == req.headers.token) {
                 logger.info(`Token validation successful for device owner: ${req.headers.device_owner} and device name: ${req.headers.device_name}`);
                 next();
