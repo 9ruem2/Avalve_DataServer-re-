@@ -1,21 +1,19 @@
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const AWS = require('aws-sdk');
-const config = require('./configs'); 
+const config = require('./configs');
 
-module.exports = () => { 
-    // AWS S3 설정 초기화
-    AWS.config.update({
-        accessKeyId: config.aws.accessKeyId, 
+
+    // AWS S3 클라이언트 초기화
+    const s3 = new AWS.S3({
+        accessKeyId: config.aws.accessKeyId,
         secretAccessKey: config.aws.secretAccessKey,
         region: config.aws.region
     });
 
-    const s3 = new AWS.S3();
-
     // 파일 업로드를 위한 multerS3 스토리지 엔진 설정
-    const multerS3Storage = multerS3({
-        s3,
+    const storage = multerS3({
+        s3: s3,
         bucket: config.aws.s3Bucket,
         contentType: multerS3.AUTO_CONTENT_TYPE,
         acl: 'public-read',
@@ -29,16 +27,19 @@ module.exports = () => {
             let fileType;
             let filePath;
 
+            console.log("Uploaded file MIME type:", file.mimetype);
+
             // 파일 타입에 따른 처리 로직
             if (file.mimetype.startsWith("image/")) {
                 fileType = "image";
-            } else if (file.mimetype == "application/json") {
+            } else if (file.mimetype === "application/json") {
                 fileType = "json";
             } else {
                 fileType = "undefined";
             }
 
             // 현재 날짜를 사용하여 파일 경로 생성
+            
             const date = new Date();
             const yyyy = date.getFullYear();
             const mm = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
@@ -49,5 +50,6 @@ module.exports = () => {
         }
     });
 
-    return multer({ storage: multerS3Storage });
-};
+    const uploadConfig = multer({ storage: storage });
+    module.exports = uploadConfig;
+

@@ -3,36 +3,6 @@ const util = require('util');
 const logger = require('../../config/loggerConfig')(module);
 const deviceRepository = require('../../repository/deviceRepository');
 const config = require('../../config/configs');
-const uploadConfig = require('../../config/uploadConfig');
-
-const uploadSingleImage = uploadConfig().single('imageFile');
-const uploadSingleJson = uploadConfig().single('jsonFile');
-
-
-// 파일 리스트를 관리하는 클래스
-class FileListManager {
-  constructor() {
-    this.yonginCameraJsonFiles = []; // yongin_camera 디바이스에서 업로드된 JSON 파일 목록
-    this.sensorboxJsonFiles = []; // Sensorbox 디바이스에서 업로드된 JSON 파일 목록
-    this.allUploadedJsonFiles = []; // 모든 디바이스에서 업로드된 JSON 파일 목록
-  }
-
-  addFile(deviceName, fileName) {
-    if (deviceName == "Sensorbox") {
-      this.sensorboxJsonFiles.push(fileName);
-    } else if (deviceName == "yongin_camera") {
-      this.yonginCameraJsonFiles.push(fileName);
-    }
-    this.allUploadedJsonFiles.push(fileName);
-  }
-
-  clearFiles() {
-    this.sensorboxJsonFiles = [];
-    this.allUploadedJsonFiles = [];
-    this.yonginCameraJsonFiles = [];
-  }
-}
-
 
 // 인터페이스 정의
 class UploadInterface {
@@ -102,14 +72,38 @@ async function processLambdaRequest(jsonUploadList, lambdaUrl) {
   }
 }
 
+// 파일 리스트를 관리하는 클래스
+class FileListManager {
+  constructor() {
+    this.yonginCameraJsonFiles = []; // yongin_camera 디바이스에서 업로드된 JSON 파일 목록
+    this.sensorboxJsonFiles = []; // Sensorbox 디바이스에서 업로드된 JSON 파일 목록
+    this.allUploadedJsonFiles = []; // 모든 디바이스에서 업로드된 JSON 파일 목록
+  }
+
+  addFile(deviceName, fileName) {
+    if (deviceName == "Sensorbox") {
+      this.sensorboxJsonFiles.push(fileName);
+    } else if (deviceName == "yongin_camera") {
+      this.yonginCameraJsonFiles.push(fileName);
+    }
+    this.allUploadedJsonFiles.push(fileName);
+  }
+
+  clearFiles() {
+    this.sensorboxJsonFiles = [];
+    this.allUploadedJsonFiles = [];
+    this.yonginCameraJsonFiles = [];
+  }
+}
+
 const fileListManager = new FileListManager();
+
 const makeUploadObject = {
   'upload_start': new UploadStart(),
   'upload_finish': new UploadFinish(fileListManager)
 };
 
 module.exports = {
-  // 클라이언트의 header.status를 확인하여 youngin_camera, sensorbox를 lambda로 실행
   checkUploadStatusHeader: async (req, res, dbConnection) => {
     const uploadObjectCreated = makeUploadObject[req.headers.status];
 
@@ -120,25 +114,21 @@ module.exports = {
     }
   },
 
-  uploadImage: async(req, res, next) => {
+  uploadImage: (req, res, dbConnection) => {
     try {
-      await uploadSingleImage(req);
       logger.info(`${req.headers.device_owner}-${req.headers.device_name} image: ${req.file.originalname}`);
-      next();
     } catch(err) {
       logger.error(`${req.headers.device_owner}-${req.headers.device_name} upload(img) error`);
       throw err;
     }
   },
 
-  uploadJson: async(req, res, next) => {
+  uploadJson: (req, res, dbConnection) => {
     try {
-      await uploadSingleJson(req);
       logger.info(`${req.headers.device_owner}-${req.headers.device_name} json ${req.file.originalname}`);
       fileListManager.addFile(req.headers.device_name, req.file.originalname);
     } catch(err) {
       logger.error(`${req.headers.device_owner}-${req.headers.device_name} upload(json) error: ${err.message}`);
     }
   }
-
 };
