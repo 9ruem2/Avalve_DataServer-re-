@@ -5,7 +5,6 @@ const uuid = require('uuid');
 exports.generateAndRegisterToken = async (socket, io, dbConnection ) => {
     try {
         const uuidToken = uuid.v4();
-        console.log(uuidToken);
         logger.info(`${socket.clientDeviceOwnerId}-${socket.clientDeviceName} new token: ${uuidToken}`);
         await deviceRepository.saveToken(socket.clientDeviceOwnerId, socket.clientDeviceName, uuidToken, dbConnection );
         io.to(socket.id).emit('upload_start', uuidToken);
