@@ -105,7 +105,7 @@ module.exports = {
         }
     },
 
-    // uploadFinish시 http_token, http_access를 초기화/ 데이터베이스 접속 중인 상태는 그대로 유지
+    // uploadFinish시 http_token(null), http_access를 초기화(0)/ 데이터베이스 접속 중인 상태는 그대로 유지
     clearHttpAccessByToken: async (clientUuidToken, dbConnection) => {
         const sql = 'UPDATE DEVICES SET http_token = ?, http_access = ? WHERE http_token = ?';
         const params = [null, 0, clientUuidToken];

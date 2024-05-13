@@ -1,4 +1,7 @@
-{
+{   
+    "scripts": {
+    "test": "jest"
+    },
     "dependencies": {
         "aws-sdk": "^2.1357.0",
         "axios": "^1.6.7",
@@ -15,5 +18,9 @@
         "uuid": "^9.0.1",
         "winston": "^3.8.2",
         "winston-daily-rotate-file": "^4.7.1"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "supertest": "^6.3.4"
     }
 }
